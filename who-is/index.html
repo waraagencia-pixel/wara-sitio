@@ -1,0 +1,414 @@
+<meta charset="utf-8">
+<title>Who Is? · WARA</title>
+<meta name="description" content="Who Is? de WARA Agency: un viaje en tren por 8 estaciones para descubrir tu marca. Reserva tu lugar en la lista de espera.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap">
+<style>
+:root{
+  --carbon:#0F0F0F; --crema:#F4EFE6; --azul:#000AFF; --hielo:#C6D6F0; --lima:#DDFB3E; --rojo:#BF2825;
+  --serif:'Instrument Serif',Georgia,'Times New Roman',serif;
+  --sans:'Instrument Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--carbon);color:var(--crema);font-family:var(--sans);overflow:hidden}
+body{padding:0}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--lima);outline-offset:3px}
+
+/* ---------- escena ---------- */
+#stage{position:absolute;top:50%;left:50%;width:max(100vw,calc(100dvh*2752/1536));aspect-ratio:2752/1536;transform:translate(-50%,-50%);overflow:hidden;background:#000}
+#stage .sway{position:absolute;inset:0;animation:sway 7s ease-in-out infinite;will-change:transform}
+#still,#still2,#clip{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;user-select:none;-webkit-user-drag:none}
+#still2{opacity:0;transition:opacity .9s ease}
+#still2.on{opacity:1}
+#clip{opacity:0;transition:opacity .25s linear}
+#clip.out{transition:opacity .85s ease}
+#clip.on{opacity:1}
+.moving .sway{animation-duration:1.6s}
+@keyframes sway{0%,100%{transform:translate(0,0) rotate(-.08deg) scale(1.02)}50%{transform:translate(.15%,.12%) rotate(.08deg) scale(1.02)}}
+.vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(0,0,0,.35) 100%)}
+
+/* ---------- interfaz ---------- */
+#ui{position:fixed;inset:0;pointer-events:none}
+#ui>*{pointer-events:auto}
+.top{position:absolute;top:max(16px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));right:max(16px,env(safe-area-inset-right));display:flex;justify-content:space-between;align-items:flex-start;gap:12px;pointer-events:none}
+.top>*{pointer-events:auto}
+.plaque{background:var(--carbon);color:var(--crema);border:1px solid rgba(244,239,230,.35);border-radius:6px;padding:9px 13px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;line-height:1.35;max-width:min(70vw,360px)}
+.plaque b{display:block;font-weight:600;font-size:13px;letter-spacing:.08em;margin-top:2px}
+.snd{background:rgba(15,15,15,.78);color:var(--crema);border:1px solid rgba(244,239,230,.35);border-radius:999px;padding:9px 14px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;min-height:40px}
+.snd[aria-pressed=true]{background:var(--lima);color:var(--carbon);border-color:var(--lima)}
+
+#anchor{position:absolute;display:flex;flex-direction:column;align-items:center;text-align:center;transform:translate(-50%,-50%);transition:opacity .6s ease}
+#anchor.hide{opacity:0;pointer-events:none}
+.hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(64px,10.6vw,190px);line-height:.92;margin:0;color:var(--carbon);letter-spacing:-.01em}
+.hero .sub{font-size:clamp(11px,1.25vw,20px);letter-spacing:.3em;text-transform:uppercase;color:var(--carbon);margin:1.4em 0 1.8em;line-height:1.7;max-width:30ch}
+.pill{border:0;background:var(--crema);color:var(--carbon);border-radius:8px;padding:1em 2.4em;font-size:12px;letter-spacing:.24em;text-transform:uppercase;font-weight:600;box-shadow:inset 0 0 0 1.5px var(--carbon);
+  -webkit-mask:radial-gradient(9px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(9px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat;
+          mask:radial-gradient(9px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(9px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat;
+  transition:background .25s,color .25s}
+.pill:hover{background:var(--carbon);color:var(--crema)}
+.hero{position:relative;isolation:isolate}
+.hero::before{content:"";position:absolute;inset:-14% -12%;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at center,rgba(244,239,230,.86) 0%,rgba(244,239,230,.62) 42%,rgba(244,239,230,0) 72%)}
+.hero .note{color:var(--carbon)}
+.herobtns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.pill.solid{background:var(--carbon);color:var(--crema)}
+.pill.solid:hover{background:var(--azul);color:#fff}
+#fres{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+#fres .f{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--carbon);margin-top:6px}
+#fres input{font:inherit;font-size:16px;padding:.7em .8em;border:1.5px solid var(--carbon);border-radius:8px;background:#fff;color:var(--carbon);width:100%}
+#fres input:focus{outline:3px solid var(--azul);outline-offset:1px}
+.err{color:var(--rojo);font-size:13px;min-height:1.2em;margin:4px 0 0}
+.note{margin-top:1.4em;font-size:11px;color:rgba(15,15,15,.72);letter-spacing:.04em;max-width:34ch}
+
+.card{color:var(--carbon);width:min(36vw,560px);min-width:min(92vw,330px);text-align:left;filter:drop-shadow(0 18px 30px rgba(0,0,0,.32))}
+/* boleto de metro: banda azul, cuerpo, perforación con muescas y talón con código de barras */
+.tk-top{background:var(--azul);color:#fff;display:flex;justify-content:space-between;gap:12px;padding:12px clamp(18px,1.9vw,28px);font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;border-radius:14px 14px 0 0}
+.tk-body{background:var(--crema);padding:clamp(18px,1.8vw,26px) clamp(18px,1.9vw,28px) clamp(20px,2vw,28px);
+  -webkit-mask:radial-gradient(11px at 0 100%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(11px at 100% 100%,#0000 98%,#000) right/51% 100% no-repeat;
+          mask:radial-gradient(11px at 0 100%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(11px at 100% 100%,#0000 98%,#000) right/51% 100% no-repeat}
+.tk-foot{position:relative;background:var(--crema);padding:clamp(18px,1.8vw,24px) clamp(18px,1.9vw,28px) 16px;border-radius:0 0 14px 14px;
+  -webkit-mask:radial-gradient(11px at 0 0,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(11px at 100% 0,#0000 98%,#000) right/51% 100% no-repeat;
+          mask:radial-gradient(11px at 0 0,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(11px at 100% 0,#0000 98%,#000) right/51% 100% no-repeat}
+.tk-foot::before{content:"";position:absolute;top:0;left:18px;right:18px;border-top:2px dashed rgba(15,15,15,.38)}
+.tk-foot .row{margin-top:0}
+.bar{height:26px;margin-top:16px;opacity:.85;background:repeating-linear-gradient(90deg,#0F0F0F 0 2px,transparent 2px 5px,#0F0F0F 5px 6px,transparent 6px 8px,#0F0F0F 8px 11px,transparent 11px 14px)}
+.card .tag{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--azul);font-weight:600;margin:0 0 .8em}
+.card h2{font-family:var(--serif);font-weight:400;font-size:clamp(23px,2.35vw,40px);line-height:1.12;margin:0 0 .45em;text-wrap:balance}
+.card h2 em{color:var(--azul)}
+.card .goal{font-size:13px;line-height:1.5;color:#3d3d3d;margin:0 0 1em}
+textarea,input[type=text]{width:100%;font:inherit;font-size:16px;line-height:1.5;color:var(--carbon);background:#fff;border:1.5px solid rgba(15,15,15,.28);border-radius:10px;padding:12px 14px;resize:vertical;min-height:50px}
+textarea{min-height:108px}
+textarea:focus,input[type=text]:focus{border-color:var(--azul);outline:none;box-shadow:0 0 0 3px rgba(0,10,255,.18)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+.hint{font-size:12px;color:#4a4a4a}
+.btns{display:flex;gap:10px;margin-left:auto}
+.btn{border-radius:8px;padding:.85em 1.7em;font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;border:0;background:#fff;color:var(--carbon);min-height:44px;box-shadow:inset 0 0 0 1.5px var(--carbon);
+  -webkit-mask:radial-gradient(7px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(7px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat;
+          mask:radial-gradient(7px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(7px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat;
+  transition:background .25s,color .25s,transform .2s}
+.btn.go{background:var(--lima)}
+.btn:active{transform:translateY(2px) scale(.98)}
+.btn:hover{background:var(--carbon);color:var(--crema)}
+.btn.go:hover{background:#cdee2c;color:var(--carbon)}
+
+/* ruta */
+.route{position:absolute;left:0;right:0;bottom:0;padding:34px max(18px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left));background:linear-gradient(180deg,transparent,rgba(15,15,15,.78));pointer-events:none}
+.line{position:relative;display:flex;justify-content:space-between;max-width:1280px;margin:0 auto}
+.line::before{content:"";position:absolute;left:4%;right:4%;top:7px;height:1.5px;background:rgba(244,239,230,.35)}
+.line .fill{position:absolute;left:4%;top:7px;height:1.5px;background:var(--lima);width:0;transition:width 2.4s ease}
+.stop{position:relative;flex:1;text-align:center;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,239,230,.62);line-height:1.3}
+.stop i{display:block;width:15px;height:15px;border-radius:50%;border:1.5px solid rgba(244,239,230,.7);background:var(--carbon);margin:0 auto 8px;position:relative;z-index:1}
+.stop.done i{background:var(--lima);border-color:var(--lima)}
+.stop.skip i{background:var(--carbon);border-style:dashed}
+.stop.cur{color:var(--crema);font-weight:600}
+.stop.cur i{background:var(--crema);border-color:var(--crema);box-shadow:0 0 0 5px rgba(244,239,230,.25);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 9px rgba(244,239,230,0)}}
+
+/* boleto final */
+.end{display:flex;flex-direction:column;align-items:center;gap:16px;width:min(92vw,760px);max-height:86dvh;overflow:auto;padding:6px}
+.end h2{font-family:var(--serif);font-weight:400;font-size:clamp(32px,4.4vw,64px);line-height:1;margin:0;color:var(--carbon);text-align:center;text-shadow:0 1px 20px rgba(244,239,230,.6)}
+.end h2 em{color:var(--azul)}
+.end canvas{width:100%;height:auto;border-radius:10px;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.end p{margin:0;font-size:13px;line-height:1.55;max-width:56ch;text-align:center;color:var(--carbon);background:rgba(244,239,230,.82);padding:8px 12px;border-radius:8px}
+.end .btns{margin:0}
+.end .btn:not(.go){background:rgba(244,239,230,.92);color:var(--carbon)}
+
+/* vertical / móvil: ventana centrada, tarjeta como hoja inferior */
+@media (max-aspect-ratio:1/1){
+  #stage{height:100dvh;width:calc(100dvh*1672/941);aspect-ratio:auto;left:calc(50vw - 0.53*100dvh*1672/941);top:0;transform:none}
+  #anchor{left:50%!important;top:auto!important;bottom:calc(88px + env(safe-area-inset-bottom));transform:translateX(-50%);width:calc(100vw - 28px)}
+  #anchor.heroPos{top:34dvh!important;bottom:auto;transform:translate(-50%,-50%)}
+  #anchor:not(.heroPos){max-height:calc(100dvh - 150px);overflow:auto;overflow-x:hidden;padding-bottom:6px}
+  .card{width:100%;min-width:0}
+  .btns{width:100%}.btns .btn{flex:1;letter-spacing:.08em;padding:.85em .8em}
+  textarea{min-height:84px}
+  .stop span{display:none}.stop i{margin-bottom:0}
+  .hero h1{font-size:clamp(60px,22vw,120px)}
+  .hero .sub{font-size:11px}
+}
+@media (prefers-reduced-motion:reduce){
+  .sway,.glass img,.shafts{animation:none}
+  .line .fill{transition:none}
+}
+</style>
+
+<div id="stage" aria-hidden="true"><div class="sway"><img id="still" alt=""><img id="still2" alt=""><video id="clip" muted playsinline preload="auto"></video></div><div class="vig"></div></div>
+
+
+<div id="ui">
+  <div class="top">
+    <div class="plaque" id="plaque" aria-live="polite">Who Is?<b>WARA Agency · lista de espera</b></div>
+    <button class="snd" id="snd" aria-pressed="false">Sonido: apagado</button>
+  </div>
+  <div id="anchor"></div>
+  <div class="route"><div class="line" id="line"><div class="fill" id="fill"></div></div></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id)};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+/* ---------- datos ---------- */
+var STILL={intro:'img/base.jpg',s1:'img/v1.jpg',s2:'img/v2.jpg',s3:'img/v3.jpg',s4:'img/v4.jpg',s5:'img/v5.jpg',s6:'img/v6.jpg',s7:'img/v7.jpg',s8:'img/v8.jpg',end:'img/v8.jpg'};
+/* clip que lleva de una vista a la siguiente */
+var CLIP={'intro>s1':'video/t0.mp4','s1>s2':'video/t1.mp4','s2>s3':'video/t2.mp4','s3>s4':'video/t3.mp4','s4>s5':'video/t4.mp4','s5>s6':'video/t5.mp4','s6>s7':'video/t6.mp4','s7>s8':'video/t7.mp4'};
+var ST=[
+ {n:'Bowling Green',s:'Bowling Green',h:'de dónde vienes',sc:'s1',goal:'Hechos, lugares y personas. Nada de "siempre tuve pasión por".',q:'¿Dónde estabas y qué hacías cuando todo esto empezó? Sé específico.'},
+ {n:'Fulton St',s:'Fulton St',h:'lo que haces',sc:'s2',goal:'Sin la frase de LinkedIn. Cuéntalo como si te preguntaran en una fiesta.',q:'Estás en una fiesta y alguien te pregunta "¿y tú qué haces?". Contesta como lo harías de verdad, sin discurso.'},
+ {n:'Times Square–42 St',s:'Times Sq',h:'lo que te prende',sc:'s3',goal:'Los valores no son adjetivos bonitos. Son decisiones que te costaron algo.',q:'Cuéntame la vez que le dijiste que NO a algo que te iba a dar dinero o visibilidad. ¿Qué pasó?'},
+ {n:'Canal St',s:'Canal St',h:'cómo hablas',sc:'s4',goal:'Escribe como si mandaras un audio de WhatsApp, con tus muletillas y tu humor.',q:'Explícale tu trabajo a tu mejor amigo, el que te conoce de toda la vida. Tal cual lo dirías.'},
+ {n:'Union Square',s:'Union Sq',h:'a quién ves',sc:'s5',goal:'Quién te escucha y qué le pasa antes de decidirse.',q:'Piensa en la última persona que te escribió "esto era justo lo que necesitaba". ¿Qué le estaba pasando?'},
+ {n:'Grand Central–42 St',s:'Grand Central',h:'lo que dicen de ti',sc:'s6',goal:'Lo que has logrado y puedes demostrar. Sin inflar, que se nota.',q:'¿Qué resultado tuyo te da más orgullo y qué decisiones lo hicieron posible?'},
+ {n:'Houston St',s:'Houston St',h:'lo que no cruzas',sc:'s7',goal:'Qué se puede usar y qué no. Nada médico ni personal de otras personas.',q:'¿Hay historias o personas que no se pueden mostrar? ¿Por qué?'},
+ {n:'Coney Island–Stillwell Av',s:'Coney Island',h:'hacia dónde miras',sc:'s8',goal:'Conectar tu voz con lo que de verdad necesitas lograr.',q:'Alguien revisa tus redes durante un mes entero. ¿Qué quieres que piense de ti?'}
+];
+var S={brand:'',cur:-1,ans:[],skip:[],busy:false};
+
+/* ---------- escenas: imagen fija + clip de viaje ---------- */
+var stage=$('stage'),still=$('still'),still2=$('still2'),clipV=$('clip'),curKey=null;
+function setStill(key){still.src=STILL[key];curKey=key}
+function preload(key){var n=nextKey(key);if(n&&CLIP[key+'>'+n]){var l=document.createElement('link');l.rel='preload';l.as='video';l.href=CLIP[key+'>'+n];document.head.appendChild(l)}}
+function nextKey(k){var o=['intro','s1','s2','s3','s4','s5','s6','s7','s8'];var i=o.indexOf(k);return i>-1&&i<o.length-1?o[i+1]:null}
+function fade(key,done){
+  still2.src=STILL[key];
+  var go=function(){still2.classList.add('on');setTimeout(function(){setStill(key);still2.classList.remove('on');done&&done()},950)};
+  if(still2.complete&&still2.naturalWidth)go();else{still2.onload=go;still2.onerror=function(){setStill(key);done&&done()}}
+}
+function layout(){
+  var a=$('anchor');
+  var portrait=window.innerWidth/window.innerHeight<=1;
+  if(!portrait){a.style.left='50%';a.style.top=(S.cur<0?'44%':'46%');a.style.maxWidth=''}
+}
+window.addEventListener('resize',layout);
+function showScene(key,travel,done){
+  if(!curKey||!travel||key===curKey){if(key!==curKey)setStill(key);done&&done();preload(key);return}
+  var src=CLIP[curKey+'>'+key];
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if(!src||reduce){fade(key,function(){done&&done();preload(key)});return}
+  var finished=false;
+  var faded=false;
+  function fadeOut(){if(faded)return;faded=true;setStill(key);clipV.classList.add('out');clipV.classList.remove('on')}
+  function end(){
+    if(finished)return;finished=true;
+    fadeOut();document.body.classList.remove('moving');Aud.travel(false);Aud.ding();
+    setTimeout(function(){clipV.classList.remove('out')},900);
+    done&&done();preload(key);
+  }
+  clipV.ontimeupdate=function(){if(clipV.duration&&clipV.currentTime>=clipV.duration-0.95)fadeOut()};
+  Aud.travel(true);document.body.classList.add('moving');
+  clipV.onended=end;clipV.onerror=function(){if(!finished){finished=true;document.body.classList.remove('moving');Aud.travel(false);fade(key,function(){done&&done();preload(key)})}};
+  clipV.src=src;
+  var p=clipV.play();
+  var shown=function(){clipV.classList.add('on')};
+  if(p&&p.then)p.then(shown,function(){clipV.onerror()});else shown();
+  setTimeout(function(){if(!finished&&clipV.currentTime<0.1){clipV.onerror()}},6000);
+  setTimeout(end,12000);
+}
+
+/* ---------- sonido (sintetizado, solo tras tocar) ---------- */
+var Aud=(function(){
+  var ctx=null,master,rumble,rg,timer=null,gap=.9,on=false;
+  function brown(c){var n=c.sampleRate*2,b=c.createBuffer(1,n,c.sampleRate),d=b.getChannelData(0),l=0;for(var i=0;i<n;i++){var w=Math.random()*2-1;l=(l+.02*w)/1.02;d[i]=l*3.5}return b}
+  function clack(){
+    if(!ctx||!on)return;var t=ctx.currentTime,n=ctx.sampleRate*.09,b=ctx.createBuffer(1,n,ctx.sampleRate),d=b.getChannelData(0);
+    for(var i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/(n*.18));
+    var s=ctx.createBufferSource();s.buffer=b;var f=ctx.createBiquadFilter();f.type='bandpass';f.frequency.value=700;f.Q.value=.9;
+    var g=ctx.createGain();g.gain.value=.5;s.connect(f);f.connect(g);g.connect(master);s.start(t);
+  }
+  function loop(){clearInterval(timer);timer=setInterval(function(){clack();setTimeout(clack,gap*1000*.22)},gap*1000)}
+  return{
+    toggle:function(){
+      if(!ctx){
+        var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return false;
+        ctx=new AC();master=ctx.createGain();master.gain.value=0;master.connect(ctx.destination);
+        var src=ctx.createBufferSource();src.buffer=brown(ctx);src.loop=true;
+        var lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=260;
+        rg=ctx.createGain();rg.gain.value=.05;src.connect(lp);lp.connect(rg);rg.connect(master);src.start();loop();
+      }
+      if(ctx.state==='suspended')ctx.resume();
+      on=!on;master.gain.setTargetAtTime(on?.9:0,ctx.currentTime,.15);return on;
+    },
+    travel:function(go){if(!ctx)return;rg.gain.setTargetAtTime(go?.17:.05,ctx.currentTime,.4);gap=go?.42:.9;loop()},
+    ding:function(){
+      if(!ctx||!on)return;var t=ctx.currentTime;[[880,0],[660,.28]].forEach(function(p){
+        var o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=p[0];
+        g.gain.setValueAtTime(0,t+p[1]);g.gain.linearRampToValueAtTime(.16,t+p[1]+.02);g.gain.exponentialRampToValueAtTime(.001,t+p[1]+1.1);
+        o.connect(g);g.connect(master);o.start(t+p[1]);o.stop(t+p[1]+1.2)});
+    }
+  };
+})();
+$('snd').addEventListener('click',function(){
+  var on=Aud.toggle();this.setAttribute('aria-pressed',on?'true':'false');this.textContent='Sonido: '+(on?'encendido':'apagado');
+});
+
+/* ---------- ruta ---------- */
+function buildLine(){
+  var h='<div class="fill" id="fill"></div>';
+  ST.forEach(function(s,i){h+='<div class="stop" id="st'+i+'"><i></i><span>'+esc(s.s)+'</span></div>'});
+  $('line').innerHTML=h;
+}
+function paintLine(){
+  ST.forEach(function(s,i){
+    var e=$('st'+i);e.className='stop'+(i<S.cur?(S.skip[i]?' skip':' done'):'')+(i===S.cur?' cur':'');
+  });
+  var pct=S.cur<0?0:Math.min(1,S.cur/(ST.length-1))*92;
+  $('fill').style.width=pct+'%';
+}
+
+/* ---------- pantallas ---------- */
+var A=$('anchor');
+function setAnchor(html,cls){
+  A.className='hide';
+  setTimeout(function(){
+    A.innerHTML=html;A.className=cls||'';layout();
+    var f=A.querySelector('[autofocus],textarea,input,button');if(f&&!/hero/.test(cls||''))try{f.focus({preventScroll:true})}catch(e){}
+  },380);
+}
+function intro(){
+  S.cur=-1;paintLine();
+  document.getElementById('plaque').innerHTML='Who Is?<b>WARA Agency · lista de espera</b>';
+  showScene('intro',false);
+  A.className='hero heroPos';A.innerHTML='<div class="hero"><h1>Who Is?</h1><p class="sub">Un viaje para descubrir tu marca</p><div class="herobtns"><button class="pill solid" id="go">Reservar mi lugar →</button><button class="pill" id="try">Probar el viaje</button></div><p class="note">8 estaciones · cero respuestas correctas</p></div>';
+  layout();
+  $('go').addEventListener('click',reserve);$('try').addEventListener('click',askBrand);
+}
+function reserve(){
+  setAnchor('<div class="card"><div class="tk-top"><span>Who Is? · Lista de espera</span><span>Andén</span></div><div class="tk-body"><p class="tag">Reserva tu boleto</p><h2>Te avisamos cuando <em>salga</em> el primer tren.</h2><p class="goal">Déjanos tu correo y te escribimos primero. Nada de spam: solo el aviso de salida y cómo subir.</p><form id="fres" novalidate><label class="f" for="nm">Tu nombre (opcional)</label><input type="text" id="nm" maxlength="60" autocomplete="name" placeholder="Cómo te llamas"><label class="f" for="em">Tu correo</label><input type="email" id="em" maxlength="120" autocomplete="email" required placeholder="tu@correo.com"><p class="err" id="er" role="alert"></p></form></div><div class="tk-foot"><div class="row"><span class="hint">Usamos tu correo solo para esta lista.</span><div class="btns"><button class="btn" id="bk">Volver</button><button class="btn go" id="sv">Reservar →</button></div></div><div class="bar" aria-hidden="true"></div></div></div>','');
+  setTimeout(function(){
+    var em=$('em'),nm=$('nm'),sv=$('sv'),er=$('er');if(!em)return;
+    $('bk').addEventListener('click',intro);
+    function send(e){
+      if(e)e.preventDefault();
+      var v=(em.value||'').trim();
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)){er.textContent='Revisa tu correo, parece incompleto.';em.focus();return}
+      er.textContent='';sv.disabled=true;sv.textContent='Reservando…';
+      fetch('/api/espera',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:v,name:(nm.value||'').trim(),src:location.search.slice(0,80)})})
+      .then(function(r){return r.json().catch(function(){return{}}).then(function(j){if(!r.ok)throw new Error(j.error||'x');return j})})
+      .then(function(j){reserved(j&&j.dup)})
+      .catch(function(){sv.disabled=false;sv.textContent='Reservar →';er.textContent='No pudimos guardar tu lugar. Intenta de nuevo en un momento.'});
+    }
+    sv.addEventListener('click',send);$('fres').addEventListener('submit',send);
+    em.addEventListener('keydown',function(e){if(e.key==='Enter')send(e)});
+  },420);
+}
+function reserved(dup){
+  setAnchor('<div class="card"><div class="tk-top"><span>Who Is? · Lista de espera</span><span>✓</span></div><div class="tk-body"><p class="tag">'+(dup?'Ya estabas en la lista':'Boleto reservado')+'</p><h2>Listo. Tu lugar en el tren <em>está guardado</em>.</h2><p class="goal">Te escribimos cuando salga el primer tren. Mientras tanto, puedes probar el viaje: lo que escribas en la prueba se queda en tu pantalla.</p></div><div class="tk-foot"><div class="row"><span class="hint">Gracias por subirte temprano.</span><div class="btns"><button class="btn" id="hm">Inicio</button><button class="btn go" id="tr">Probar el viaje →</button></div></div><div class="bar" aria-hidden="true"></div></div></div>','');
+  setTimeout(function(){var a=$('hm'),b=$('tr');if(a)a.addEventListener('click',intro);if(b)b.addEventListener('click',askBrand)},420);
+}
+function askBrand(){
+  setAnchor('<div class="card"><div class="tk-top"><span>Who Is? · Boleto de viaje</span><span>Andén</span></div><div class="tk-body"><p class="tag">Antes de subir</p><h2>¿Cómo se llama tu <em>marca</em> o proyecto?</h2><p class="goal">Va en tu boleto de viaje. Si todavía no tiene nombre, pon el tuyo.</p><input type="text" id="brand" maxlength="40" autocomplete="off" placeholder="Escríbelo aquí"></div><div class="tk-foot"><div class="row"><span class="hint">Sin respuestas correctas.</span><div class="btns"><button class="btn go" id="ok">Subir al tren →</button></div></div><div class="bar" aria-hidden="true"></div></div></div>','');
+  setTimeout(function(){
+    var i=$('brand'),b=$('ok');if(!i)return;
+    function go(){S.brand=(i.value||'').trim()||'Tu marca';station(0)}
+    b.addEventListener('click',go);i.addEventListener('keydown',function(e){if(e.key==='Enter')go()});
+  },420);
+}
+function station(i,fromSkip){
+  if(S.busy)return;S.busy=true;
+  var st=ST[i];S.cur=i;paintLine();
+  A.className='hide';
+  $('plaque').innerHTML='Próxima estación<b>'+esc(st.n)+'</b>';
+  showScene(st.sc,true,function(){
+    $('plaque').innerHTML='['+('0'+(i+1)).slice(-2)+'/08] Estación<b>'+esc(st.n)+'</b>';
+    var prev=S.ans[i]||'';
+    A.innerHTML='<div class="card"><div class="tk-top"><span>Who Is? · Boleto de viaje</span><span>['+('0'+(i+1)).slice(-2)+'/08]</span></div><div class="tk-body"><p class="tag">'+esc(st.n)+' · '+esc(st.h)+'</p><h2>'+esc(st.q)+'</h2><p class="goal">'+esc(st.goal)+'</p><textarea id="ta" aria-label="Tu respuesta" placeholder="Cuéntalo como te salga…">'+esc(prev)+'</textarea></div><div class="tk-foot"><div class="row"><span class="hint">Pregunta 1 de 1 en esta demo</span><div class="btns"><button class="btn" id="sk">Saltar</button><button class="btn go" id="nx">'+(i<ST.length-1?'Siguiente estación →':'Llegar →')+'</button></div></div><div class="bar" aria-hidden="true"></div></div></div>';
+    A.className='';layout();S.busy=false;
+    var ta=$('ta');try{ta.focus({preventScroll:true})}catch(e){}
+    function next(skipped){
+      var v=ta.value.trim();
+      if(skipped||v.length<2){S.skip[i]=true;S.ans[i]=''}else{S.skip[i]=false;S.ans[i]=v}
+      if(i<ST.length-1)station(i+1);else arrive();
+    }
+    $('nx').addEventListener('click',function(){next(false)});
+    $('sk').addEventListener('click',function(){next(true)});
+    ta.addEventListener('keydown',function(e){if(e.key==='Enter'&&(e.metaKey||e.ctrlKey))next(false)});
+  });
+}
+function arrive(){
+  S.busy=true;S.cur=ST.length;paintLine();A.className='hide';
+  $('plaque').innerHTML='Fin de la línea<b>Coney Island–Stillwell Av</b>';
+  showScene('end',false,function(){
+    S.busy=false;
+    var n=S.ans.filter(function(a){return a}).length;
+    A.innerHTML='<div class="end"><h2>Llegaste, <em>'+esc(S.brand)+'</em>.</h2><canvas id="tk" width="1200" height="560" role="img" aria-label="Boleto de viaje con las estaciones recorridas"></canvas><p>Respondiste '+n+' de '+ST.length+' estaciones. Las que dejaste en blanco quedan marcadas en el boleto. Esto fue una prueba: nada de lo que escribiste salió de tu pantalla. Reserva tu lugar para el viaje completo.</p><div class="btns"><button class="btn" id="again">Volver a subir</button><button class="btn" id="save" hidden>Guardar boleto</button><button class="btn go" id="rsv">Reservar mi lugar →</button></div></div>';
+    A.className='';layout();
+    drawTicket($('tk'));
+    $('again').addEventListener('click',function(){S.ans=[];S.skip=[];S.brand='';intro()});
+    $('rsv').addEventListener('click',reserve);
+    claudeDl();
+  });
+}
+
+/* ---------- boleto (canvas) ---------- */
+function drawTicket(cv){
+  var c=cv.getContext('2d'),W=cv.width,H=cv.height;
+  function paint(logo){
+    c.clearRect(0,0,W,H);
+    c.fillStyle='#F4EFE6';c.fillRect(0,0,W,H);
+    c.strokeStyle='#0F0F0F';c.lineWidth=3;c.strokeRect(14,14,W-28,H-28);
+    c.fillStyle='#0F0F0F';c.fillRect(14,14,W-28,10);
+    /* muescas */
+    c.fillStyle='#0F0F0F';[0,H].forEach(function(y){c.beginPath();c.arc(870,y,22,0,7);c.fill()});
+    c.setLineDash([8,10]);c.lineWidth=2;c.beginPath();c.moveTo(870,40);c.lineTo(870,H-40);c.stroke();c.setLineDash([]);
+    c.textBaseline='alphabetic';
+    try{c.letterSpacing='4px'}catch(e){}
+    c.font='600 17px "Instrument Sans",system-ui,sans-serif';c.fillStyle='#000AFF';c.fillText('WHO IS?  ·  BOLETO DE VIAJE',56,78);
+    try{c.letterSpacing='0px'}catch(e){}
+    c.fillStyle='#0F0F0F';c.font='400 64px "Instrument Serif",Georgia,serif';
+    var nm=S.brand||'Tu marca';while(c.measureText(nm).width>760&&nm.length>4)nm=nm.slice(0,-1);
+    c.fillText(nm===(S.brand||'Tu marca')?nm:nm+'…',56,152);
+    c.font='400 24px "Instrument Serif",Georgia,serif';c.fillStyle='#3d3d3d';
+    c.fillText('De Bowling Green  →  a Coney Island–Stillwell Av',56,192);
+    c.font='500 20px "Instrument Sans",system-ui,sans-serif';
+    ST.forEach(function(s,i){
+      var col=i<4?0:1,row=i%4,x=56+col*400,y=250+row*62,ok=S.ans[i];
+      c.fillStyle=ok?'#DDFB3E':'#F4EFE6';c.strokeStyle='#0F0F0F';c.lineWidth=2.5;
+      c.beginPath();c.arc(x+14,y-7,14,0,7);c.fill();c.stroke();
+      c.fillStyle='#0F0F0F';c.font='600 18px "Instrument Sans",system-ui,sans-serif';c.fillText(ok?'✓':'–',x+7,y-1);
+      c.font='500 20px "Instrument Sans",system-ui,sans-serif';c.fillStyle=ok?'#0F0F0F':'#7a7a7a';
+      c.fillText(s.n.length>22?s.s:s.n,x+40,y-12);
+      c.font='400 15px "Instrument Sans",system-ui,sans-serif';c.fillStyle=ok?'#000AFF':'#9a9a9a';c.fillText(s.h,x+40,y+10);
+    });
+    /* talón */
+    if(logo)c.drawImage(logo,918,52,168,78);
+    var d=new Date(),mm=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][d.getMonth()];
+    c.fillStyle='#0F0F0F';c.font='500 16px "Instrument Sans",system-ui,sans-serif';
+    c.fillText(d.getDate()+' '+mm+' '+d.getFullYear(),918,170);
+    var seed=0,t=S.brand||'wara';for(var i=0;i<t.length;i++)seed=(seed*31+t.charCodeAt(i))%9973;
+    c.fillText('N.º '+('0000'+(seed%10000)).slice(-4),918,196);
+    var x=918;for(var k=0;k<46;k++){seed=(seed*1103+12345)%65536;var w=2+(seed%4);c.fillRect(x,246,w,150);x+=w+3+(seed%3);if(x>1160)break}
+    c.fillStyle='#000AFF';c.fillRect(918,424,238,52);
+    c.fillStyle='#F4EFE6';try{c.letterSpacing='3px'}catch(e){}c.font='600 15px "Instrument Sans",system-ui,sans-serif';
+    c.fillText('1 VIAJE · IDA',938,456);try{c.letterSpacing='0px'}catch(e){}
+  }
+  var run=function(){var im=new Image();im.onload=function(){paint(im)};im.onerror=function(){paint(null)};im.src='img/logo-carbon.png'};
+  paint(null);
+  if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('400 64px "Instrument Serif"'),document.fonts.load('500 20px "Instrument Sans"'),document.fonts.load('600 18px "Instrument Sans"')]).then(run,run)}else run();
+}
+function claudeDl(){
+  try{
+    if(!window.claude||!claude.use)return;
+    claude.use('downloads').then(function(dl){
+      if(!dl)return;var b=$('save');if(!b)return;b.hidden=false;
+      b.addEventListener('click',function(){
+        $('tk').toBlob(function(blob){
+          if(!blob)return;
+          dl.save({filename:'boleto-who-is.png',data:blob}).catch(function(){});
+        },'image/png');
+      });
+    }).catch(function(){});
+  }catch(e){}
+}
+
+/* ---------- arranque ---------- */
+buildLine();
+if(location.search.indexOf('debug')>-1)document.body.classList.add('dbg');
+setStill('intro');preload('intro');
+intro();
+window.__whois={station:function(i){S.brand=S.brand||'Wara';station(i)},arrive:function(){S.brand='Wara';S.ans=['x','x','','x','x','x','','x'];S.skip=[false,false,true,false,false,false,true,false];arrive()},go:askBrand};
+})();
+</script>
